@@ -42,7 +42,10 @@ export class SecurClient {
   }
 
   /**
-   * Refetch user's data using the current session token. This determines the session's is invalidity if an error is thrown
+   * Refetch user's data using the current session token.
+   * This determines the session's is invalidity if an error is thrown.
+   * The retrieved user data is considered updated, so therefor this data is automatically
+   * saved to the SecurStore.
    * @returns Promise of type void
    */
   public static async verify(): Promise<void> {
