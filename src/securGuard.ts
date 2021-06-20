@@ -109,6 +109,7 @@ export class SecurRouteGuard {
               memberCached.member.username +
               ">: Session still valid."
           );
+          SecurStore.updateMember(memberCached.member);
           SecurStore.setSecurReady(true);
         }
       }
