@@ -18,7 +18,7 @@ export class SecurStore {
 
     if (!this.store.state.secur) {
       this.store.state.secur = {
-        read: false as boolean,
+        ready: false as boolean,
         member: undefined as SecurMember,
       };
     }
