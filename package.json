@@ -1,6 +1,6 @@
 {
   "name": "alliance-secur-vue",
-  "version": "1.0.6",
+  "version": "1.0.6-03",
   "description": "Alliance Secur client lib for vuejs applications",
   "main": "lib/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "alliance-client-lib": "^1.0.4-rc6",
+    "alliance-client-lib": "^1.0.4-rc8",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

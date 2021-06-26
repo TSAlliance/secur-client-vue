@@ -6,7 +6,7 @@ import {
   ClientNetworkError,
 } from "alliance-client-lib/lib/errors";
 import {
-  AllianceApiService,
+  AllianceSDK,
   AllianceRouteMethod,
 } from "alliance-client-lib/lib/router";
 import { SecurMember } from "./securMember";
@@ -73,7 +73,7 @@ export class SecurClient {
    */
   public static async login(): Promise<SecurMember> {
     return new Promise((resolve, reject) => {
-      AllianceApiService.getInstance()
+      AllianceSDK.getInstance()
         .request<SecurMember>({
           method: AllianceRouteMethod.GET,
           path: "/members/:id",
