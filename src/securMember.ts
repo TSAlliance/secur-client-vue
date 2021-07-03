@@ -1,4 +1,3 @@
-import { SecurCookieManager } from "./securCookie";
 import { SecurStore } from "./securStore";
 
 export class SecurRole {

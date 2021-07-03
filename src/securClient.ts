@@ -73,6 +73,7 @@ export class SecurClient {
    */
   public static async login(): Promise<SecurMember> {
     return new Promise((resolve, reject) => {
+      
       AllianceSDK.getInstance()
         .request<SecurMember>({
           method: AllianceRouteMethod.GET,

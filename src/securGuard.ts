@@ -4,7 +4,7 @@ import { ApiError } from "alliance-client-lib/lib/error";
 import {
   ClientInternalError,
   ClientNetworkError,
-} from "alliance-client-lib/lib/errors";
+} from "alliance-sdk/lib/errors";
 import { SecurClient } from "./securClient";
 import { SecurAccountNotFoundError } from "./securError";
 import { SecurErrorHandler } from "./securErrorHandler";
