@@ -1,22 +1,7 @@
-import { RouteLocationRaw, Router } from "vue-router";
-
-import { ApiError } from "alliance-client-lib/lib/error";
-import {
-  ClientInternalError,
-  ClientNetworkError,
-} from "alliance-client-lib/lib/errors";
-import {
-  AllianceSDK,
-  AllianceRouteMethod,
-} from "alliance-client-lib/lib/router";
-import { SecurMember } from "./securMember";
-import {
-  SecurAccountNotFoundError,
-  SecurInvalidSessionError,
-} from "./securError";
+import { SecurClient as NodeSecurClient, SecurMember } from "secur-node";
 import { SecurStore } from "./securStore";
 
-export class SecurClient {
+export class VueSecurClient {
   /**
    * Destroys the user's session in the browser.
    * You should redirect the user back to a login page after the logout process.
@@ -24,21 +9,6 @@ export class SecurClient {
    */
   public static async logout(): Promise<void> {
     SecurStore.clear();
-  }
-
-  /**
-   * Destroys the user's session in the browser and redirects
-   * to specific route
-   * @param router Router's instance
-   * @param route Route object
-   * @returns Promise of type void
-   */
-  public static async logoutAndRedirect(
-    router: Router,
-    route: RouteLocationRaw
-  ): Promise<void> {
-    if (!window) return;
-    this.logout().then(() => router.push(route));
   }
 
   /**
@@ -72,38 +42,10 @@ export class SecurClient {
    * @returns Promise of type SecurMember
    */
   public static async login(): Promise<SecurMember> {
-    return new Promise((resolve, reject) => {
-      
-      AllianceSDK.getInstance()
-        .request<SecurMember>({
-          method: AllianceRouteMethod.GET,
-          path: "/members/:id",
-          params: {
-            id: "@me",
-          },
-          authRequired: true,
-        })
-        .perform(false)
-        .then((member) => {
-          this.update(member);
-          resolve(member);
-        })
-        .catch((error: ApiError) => {
-          if (error.statusCode) {
-            if (error.statusCode == 404) {
-              reject(new SecurAccountNotFoundError());
-            } else {
-              reject(new SecurInvalidSessionError());
-            }
-          } else {
-            if (error.message == "Network Error") {
-              reject(new ClientNetworkError());
-            } else {
-              reject(new ClientInternalError());
-              console.error(error);
-            }
-          }
-        });
+    const promise = NodeSecurClient.loginWithToken(SecurStore.getSessionToken());
+    promise.then((member: SecurMember) => {
+      this.update(member);
     });
+    return promise;
   }
 }
