@@ -1,6 +1,6 @@
 {
   "name": "secur-vue",
-  "version": "1.0.0",
+  "version": "1.0.9",
   "description": "Alliance Secur client lib for vuejs applications",
   "main": "lib/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "alliance-sdk": "^1.0.5",
-    "secur-node": "^1.0.10"
+    "secur-node": "^1.0.11"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.18.0",
