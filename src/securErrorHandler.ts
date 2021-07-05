@@ -1,8 +1,8 @@
-import { ApiError } from "alliance-client-lib/lib/error";
+import { ApiError } from "alliance-sdk";
 import {
   SecurAccountNotFoundError,
   SecurInvalidSessionError,
-} from "./securError";
+} from "secur-node";
 
 export interface SecurErrorHandler {
   handleAccountNotFound?(error: SecurAccountNotFoundError);

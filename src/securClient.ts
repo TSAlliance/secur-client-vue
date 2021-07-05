@@ -21,10 +21,7 @@ export class VueSecurClient {
   public static async verify(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.login()
-        .then((member) => {
-          this.update(member);
-          resolve();
-        })
+        .then(() => resolve())
         .catch((error) => reject(error));
     });
   }
@@ -42,7 +39,9 @@ export class VueSecurClient {
    * @returns Promise of type SecurMember
    */
   public static async login(): Promise<SecurMember> {
-    const promise = NodeSecurClient.loginWithToken(SecurStore.getSessionToken());
+    const promise = NodeSecurClient.loginWithToken(
+      SecurStore.getSessionToken()
+    );
     promise.then((member: SecurMember) => {
       this.update(member);
     });
