@@ -1,18 +1,18 @@
+import { ApiError } from "alliance-sdk";
+import {
+  ClientNetworkError,
+  ClientInternalError,
+} from "alliance-sdk/lib/error/errors";
 import { RouteLocationNormalized, RouteLocationRaw, Router } from "vue-router";
 
-import { ApiError } from "alliance-client-lib/lib/error";
-import {
-  ClientInternalError,
-  ClientNetworkError,
-} from "alliance-sdk/lib/errors";
-import { SecurClient } from "./securClient";
-import { SecurAccountNotFoundError } from "./securError";
+import { VueSecurClient } from "./securClient";
+import { SecurAccountNotFoundError } from "secur-node";
 import { SecurErrorHandler } from "./securErrorHandler";
 import { SecurStore } from "./securStore";
 
 export abstract class SecurGuardConfig {
   homeRoute: RouteLocationRaw;
-  loginRoute: RouteLocationRaw;
+  loginRoute: RouteLocationRaw | string;
   errorHandler: SecurErrorHandler = undefined;
 }
 
@@ -29,6 +29,17 @@ export class SecurRouteGuard {
 
     // Gather user's data before routing (check if logged in)
     router.beforeEach((to, from, next) => {
+      if (to.query.accessToken) {
+        const query = Object.assign({}, to.query);
+        const token: string = to.query.accessToken.toString();
+
+        SecurStore.clear();
+        SecurStore.setSessionToken(token);
+
+        delete query.accessToken;
+        router.replace({ query });
+      }
+
       next();
 
       const memberCached = SecurStore.getMemberCached();
@@ -45,7 +56,7 @@ export class SecurRouteGuard {
       // If no member data exist in store, the user is considered logged out
       if (!sessionExistedBefore) {
         if (to.meta.requiresAuth) {
-          SecurClient.login()
+          VueSecurClient.login()
             .then((member) => {
               SecurStore.setSecurReady(true);
               console.info(
@@ -60,7 +71,7 @@ export class SecurRouteGuard {
               this.handleError(sessionExistedBefore, error, router, to, from);
             });
         } else {
-          SecurClient.login()
+          VueSecurClient.login()
             .then((member) => {
               SecurStore.setSecurReady(true);
               console.info(
@@ -87,7 +98,7 @@ export class SecurRouteGuard {
               ">: Expired. Verifying session..."
           );
 
-          SecurClient.verify()
+          VueSecurClient.verify()
             .then(() => {
               console.info(
                 "[" +
@@ -132,9 +143,9 @@ export class SecurRouteGuard {
       if (routeRequiresAuth || (fromRoute && fromRoute.meta.requiresAuth)) {
         if (!SecurStore.getStore().state.member) {
           if (fromRoute) {
-            router.push(fromRoute);
+            this.routerPush(router, fromRoute);
           } else {
-            router.push(this._config.homeRoute);
+            this.routerPush(router, this._config.homeRoute);
           }
         }
       }
@@ -144,7 +155,7 @@ export class SecurRouteGuard {
       }
     } else {
       // In every other errors case -> logout user
-      SecurClient.logout();
+      VueSecurClient.logout();
 
       if (sessionExistedBefore) {
         // If a session existed before, a message should be shown
@@ -167,8 +178,16 @@ export class SecurRouteGuard {
 
       if (routeRequiresAuth) {
         // If the route requires the user to be authenticated -> push to Login
-        router.push(this._config.loginRoute);
+        this.routerPush(router, this._config.loginRoute);
       }
+    }
+  }
+
+  private static routerPush(router: Router, route: RouteLocationRaw | string) {
+    if (typeof route == "string") {
+      window.location.href = route;
+    } else {
+      router.push(route);
     }
   }
 }
