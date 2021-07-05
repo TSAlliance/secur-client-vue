@@ -1,32 +1,47 @@
-import { Router } from "vue-router";
 import { SecurGuardConfig, SecurRouteGuard } from "./securGuard";
 import { SecurStore } from "./securStore";
 import { VueSecurClient } from "./securClient";
-import { SecurMember, SecurRole } from "secur-node";
+import { SecurClient, SecurMember, SecurRole } from "secur-node";
+import { SecurConfig } from "secur-node/lib/securClient";
+import store from "./store";
 
-export interface SecurConfig {
-  store: any;
-  guard: {
-    router: Router;
-    config: SecurGuardConfig;
-  };
+export abstract class VueSecurConfig implements SecurConfig {
+  protocol: string;
+  host: string;
+  port: number;
+  path?: string;
+  guardConfig: SecurGuardConfig;
 }
 
 export default {
-  install: (app, options: SecurConfig) => {
-    if (!options) {
-      throw new Error(
-        "Missing 'store' and 'error' property when initializing SecurPlugin."
+  install: (app, config: VueSecurConfig) => {
+    if (!config) {
+      throw new Error("Missing config when initializing SecurPlugin.");
+    }
+
+    if (!app.config.globalProperties.$store) {
+      console.warn(
+        "VueSecur did not found vuex store on vue instance. This may cause reduced functionality."
+      );
+      return;
+    } else {
+      app.config.globalProperties.$store.registerModule("secur", store);
+    }
+
+    if (!app.config.globalProperties.$router) {
+      console.warn(
+        "VueSecur did not found vue-router on vue instance. This may cause reduced functionality."
+      );
+      return;
+    } else {
+      SecurRouteGuard.initRouteGuards(
+        app.config.globalProperties.$router,
+        config.guardConfig
       );
     }
 
-    SecurStore.init(options.store);
-    SecurRouteGuard.initRouteGuards(options.guard.router, options.guard.config);
+    SecurClient.init(config);
   },
 };
 
-export {
-  VueSecurClient,
-  SecurMember, 
-  SecurRole
-}
+export { VueSecurClient, SecurMember, SecurRole, SecurStore };

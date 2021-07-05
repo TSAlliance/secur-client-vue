@@ -1,5 +1,8 @@
+import { SecurMember } from "secur-node";
+
 import { SecurCookieManager } from "./securCookie";
-import { SecurMember, SecurMemberCached } from "./securMember";
+import { SecurMemberCached } from "./securMember";
+import store from "./store";
 
 const COOKIE_SESSION_TOKEN = "tsalliance_sess::token";
 const COOKIE_SESSION_VERIFY = "tsalliance_sess::verify";
@@ -7,29 +10,12 @@ const COOKIE_SESSION_VERIFY = "tsalliance_sess::verify";
 const LOCAL_STORAGE_ACC_DATA_KEY = "tsalliance_account_data";
 
 export class SecurStore {
-  private static store;
-
-  /**
-   * Initialize store
-   * @param _store
-   */
-  public static init(_store) {
-    this.store = _store;
-
-    if (!this.store.state.secur) {
-      this.store.state.secur = {
-        ready: false as boolean,
-        member: undefined as SecurMember,
-      };
-    }
-  }
-
   /**
    * Get Vuex store
    * @returns Store
    */
   public static getStore() {
-    return this.store;
+    return store;
   }
 
   /**
@@ -51,6 +37,18 @@ export class SecurStore {
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       path: "/",
     });
+    this.refreshVerifyToken();
+  }
+
+  /**
+   * Refresh the verify cookie token
+   */
+  public static refreshVerifyToken() {
+    SecurCookieManager.setWithRandomValue({
+      name: COOKIE_SESSION_VERIFY,
+      maxAgeSeconds: 3600,
+      path: "/",
+    });
   }
 
   /**
@@ -58,7 +56,7 @@ export class SecurStore {
    */
   public static clear() {
     localStorage.clear();
-    this.store.state.secur.member = null;
+    store.state.member = undefined;
     SecurCookieManager.remove(COOKIE_SESSION_TOKEN);
     SecurCookieManager.remove(COOKIE_SESSION_VERIFY);
   }
@@ -68,14 +66,10 @@ export class SecurStore {
    * @param member Updated data
    */
   public static updateMember(member: SecurMember) {
-    this.store.state.secur.member = member;
+    store.state.member = member;
 
     localStorage.setItem(LOCAL_STORAGE_ACC_DATA_KEY, JSON.stringify(member));
-    SecurCookieManager.setWithRandomValue({
-      name: COOKIE_SESSION_VERIFY,
-      maxAgeSeconds: 3600,
-      path: "/",
-    });
+    this.refreshVerifyToken();
   }
 
   /**
@@ -107,6 +101,6 @@ export class SecurStore {
    * @param isReady
    */
   public static setSecurReady(isReady: boolean) {
-    this.store.state.secur.ready = isReady;
+    store.state.ready = isReady;
   }
 }
