@@ -1,6 +1,6 @@
 {
   "name": "secur-vue",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Alliance Secur client lib for vuejs applications",
   "main": "lib/index.js",
   "scripts": {
