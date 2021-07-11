@@ -1,4 +1,7 @@
-import { SecurClient as NodeSecurClient, SecurMember } from "secur-node";
+import {
+  SecurClient as NodeSecurClient,
+  SecurMember,
+} from "@tsalliance/secur-node";
 import { SecurStore } from "./securStore";
 
 export class VueSecurClient {

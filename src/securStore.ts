@@ -1,4 +1,4 @@
-import { SecurMember } from "secur-node";
+import { SecurMember } from "@tsalliance/secur-node";
 
 import { SecurCookieManager } from "./securCookie";
 import { SecurMemberCached } from "./securMember";

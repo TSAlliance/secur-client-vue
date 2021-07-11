@@ -1,5 +1,5 @@
 import { SecurStore } from "./securStore";
-import { SecurMember } from "secur-node";
+import { SecurMember } from "@tsalliance/secur-node";
 
 export class SecurMemberCached {
   public member: SecurMember;

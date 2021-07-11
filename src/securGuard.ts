@@ -1,12 +1,12 @@
-import { ApiError } from "alliance-sdk";
+import { ApiError } from "@tsalliance/sdk";
 import {
   ClientNetworkError,
   ClientInternalError,
-} from "alliance-sdk/lib/error/errors";
+} from "@tsalliance/sdk/lib/error/errors";
 import { RouteLocationNormalized, RouteLocationRaw, Router } from "vue-router";
 
 import { VueSecurClient } from "./securClient";
-import { SecurAccountNotFoundError } from "secur-node";
+import { SecurAccountNotFoundError } from "@tsalliance/secur-node";
 import { SecurErrorHandler } from "./securErrorHandler";
 import { SecurStore } from "./securStore";
 

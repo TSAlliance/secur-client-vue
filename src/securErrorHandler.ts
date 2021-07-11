@@ -1,4 +1,4 @@
-import { ApiError } from "alliance-sdk";
+import { ApiError } from "@tsalliance/sdk";
 import {
   SecurAccountNotFoundError,
   SecurInvalidSessionError,
