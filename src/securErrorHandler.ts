@@ -2,7 +2,7 @@ import { ApiError } from "@tsalliance/sdk";
 import {
   SecurAccountNotFoundError,
   SecurInvalidSessionError,
-} from "secur-node";
+} from "@tsalliance/secur-node";
 
 export interface SecurErrorHandler {
   handleAccountNotFound?(error: SecurAccountNotFoundError);
